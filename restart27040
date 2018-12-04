@@ -1,0 +1,33 @@
+## Script to Restart SSH Tunnel by Search Port Number 27040
+
+## Go To Script Path
+cd /root/Scripts/RestartPort27040
+
+## Grep Old Process ID
+ps -ef | grep 27040:10 | grep -v grep > .procid.txt
+
+## Cut Column 2 from Text file
+awk '{print $2}' .procid.txt > .procid2.txt
+
+## Grep Old Process ID to File
+prcold=$(cat .procid2.txt)
+
+#printf `date "+%d.%m.%Y-%H:%M"` >> .ProcessID.txt
+#printf " Old Process id : " >> .ProcessID.txt
+#echo "$prcold" >> .ProcessID.txt
+
+#Kill Process ID in Text File
+kill -9 `cat .procid2.txt`
+
+## Start new session
+ssh -nNT -R 27040:10.81.238.121:17040 -f -C -q remote@localhost
+
+## Grep New Process ID and cut Coolumn 2 from Text File
+ps -ef | grep 27040:10 | grep -v grep > .procidnew.txt
+awk '{print $2}' .procidnew.txt > .procidnew2.txt
+
+## Stamp New Process ID to file
+prcnew=$(cat .procidnew2.txt)
+printf `date "+%d.%m.%Y-%H:%M"` >> .ProcessID.txt
+printf " New Process id : " >> .ProcessID.txt
+echo "$prcnew" >> .ProcessID.txt
